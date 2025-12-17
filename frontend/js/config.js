@@ -1,5 +1,6 @@
 // ============================================
 // Drone Media Sharing Platform - Configuration
+// Version: 1.0.2 | CI/CD Test
 // ============================================
 
 const CONFIG = {
