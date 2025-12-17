@@ -1,0 +1,55 @@
+# ============================================
+# 前端自动部署到 Azure Blob Storage
+# ============================================
+name: Deploy Frontend
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'frontend/**'
+  workflow_dispatch:  # 允许手动触发
+
+env:
+  AZURE_STORAGE_ACCOUNT: stdronemediastorage
+  AZURE_CONTAINER: '$web'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy to Azure Blob Storage
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Clear existing files
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az storage blob delete-batch \
+              --account-name ${{ env.AZURE_STORAGE_ACCOUNT }} \
+              --source ${{ env.AZURE_CONTAINER }} \
+              --auth-mode key
+
+      - name: Upload frontend files
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az storage blob upload-batch \
+              --account-name ${{ env.AZURE_STORAGE_ACCOUNT }} \
+              --destination ${{ env.AZURE_CONTAINER }} \
+              --source ./frontend \
+              --overwrite \
+              --auth-mode key
+
+      - name: Deployment Summary
+        run: |
+          echo "✅ Frontend deployed successfully!"
+          echo "🌐 URL: https://${{ env.AZURE_STORAGE_ACCOUNT }}.z7.web.core.windows.net"

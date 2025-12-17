@@ -1,0 +1,271 @@
+# Drone Media Sharing Platform — PPT Script (English)
+
+## Design and Scalability Overview
+
+## (Generated from Markdown)
+
+# Problem Definition
+
+##  
+
+## •     A cloud-native platform for drone pilots and teams to ingest, manage, search, collaborate on, and distribute drone media (photos, videos, audio) with rich geospatial metadata.
+
+## •     Audience: hobbyists, professional pilots, inspection teams, emergency response units.
+
+## •     Media types: high-resolution photos (RAW/JPEG), 4K/8K videos, 360° footage, live streams, mission audio.
+
+## •     Metadata: GPS coordinates, altitude, heading, speed, sensor data, timestamps, camera params.
+
+## •     Workflows: mission planning and capture → upload/stream → processing/indexing → review/annotation → share/publish.
+
+## •     Core challenges: bursty uploads; heavy compute for transcoding/indexing; large storage footprint; low-latency viewing; compliance/privacy.
+
+## •     Value proposition: centralized asset catalog, fast discovery, secure sharing, collaboration, and analytics.
+
+# Scalability and the appropriateness of using cloud architecture
+
+##  
+
+## •     Cloud is well‑suited to unpredictable workloads and heavy media processing with elastic scaling and global delivery.
+
+## •     Elastic compute for transcoding, thumbnailing, AI enrichment; scale out on demand.
+
+## •     Object storage for massive, durable, cost‑optimized media; lifecycle policies for tiering.
+
+## •     Event-driven pipelines decouple producers and consumers; handle bursts gracefully.
+
+## •     Global CDN reduces latency for playback and previews; edge caching saves bandwidth.
+
+## •     Pay‑as‑you‑go model aligns cost with usage peaks (missions, events, crises).
+
+## •     Managed services reduce undifferentiated heavy lifting; focus on product features.
+
+# Chosen cloud model
+
+##  
+
+## •     Microservices with event‑driven communication, combined with serverless components for elasticity.
+
+## •     Services: Identity & Access, Flight Management, Media Ingest/Processing, Catalog/Metadata, Search/Discovery, Distribution/Streaming, Compliance & Audit.
+
+## •     Event bus connects services via domain events (uploaded, processed, indexed, flagged).
+
+## •     Independent scaling per service (e.g., processing vs. playback) reduces contention.
+
+## •     Polyglot tech stack per service: video pipelines, geospatial search, real‑time messaging.
+
+## •     Alternative models considered: monolith (simpler, inflexible), N‑tier (higher coupling), pure serverless (workflow complexity). Final: microservices + serverless for balance.
+
+# Domain Driven Analysis
+
+##  
+
+## •     Bounded contexts and entities derived from drone media domain.
+
+## •     Entities: User/Org, Drone Device, Mission/Flight, Media Asset, Metadata (geo/sensor), Comments/Likes, Share/ACL, Compliance Record.
+
+## •     Bounded contexts: Identity & Access; Flight Management; Media Ingest; Media Processing & Catalog; Search & Discovery; Streaming; Compliance & Audit.
+
+## •     Ubiquitous language: mission, waypoint, asset, catalog, index, stream, compliance flag.
+
+## •     Aggregates: Mission (flights/assets), Asset (derivatives/metadata), Policy (rules/compliance).
+
+## •     Domain events: AssetUploaded, AssetProcessed, IndexUpdated, ComplianceFlagged, ShareGranted.
+
+# Architecture diagram
+
+# Architecture explanation
+
+##  
+
+## •     From upload to playback, an event‑driven pipeline orchestrates processing, indexing, compliance, and distribution.
+
+## •     Ingestion: Clients upload media or push live streams via Front Door/CDN; front‑end is served by Static Web Apps.
+
+## •     Authentication: Microsoft Entra ID provides SSO/MFA and issues tokens for secure API calls.
+
+## •     Media processing: Media Service validates files, generates proxies/thumbnails, transcodes for HLS/DASH; writes assets to Blob.
+
+## •     Cataloging: Catalog Service stores descriptive and technical metadata in Cosmos DB; links to missions and access controls.
+
+## •     Indexing: Search Service consumes processing events, enriches assets (text/labels/geo), updates Cognitive Search indexes.
+
+## •     Compliance: Compliance Service checks geofencing, privacy rules, retention policies; records audit trails and flags.
+
+## •     Distribution: CDN serves on‑demand streams and previews; SignalR delivers real‑time collaboration notifications.
+
+# Selected Azure services
+
+##  
+
+## •     Microsoft Entra ID: Identity, OAuth/OIDC, tenant isolation, RBAC.
+
+## •     Azure Front Door + CDN: global entry point, edge caching, WAF protection.
+
+## •     Azure Static Web Apps: modern front‑end hosting with built‑in auth and API routing.
+
+## •     Azure Functions: HTTP/event triggers for processing, webhooks, orchestration steps.
+
+## •     Azure Blob Storage: durable, scalable object storage for originals and derivatives.
+
+## •     Azure Cosmos DB (MongoDB API): asset catalog, metadata, relations to missions/users.
+
+# Selected Azure services cont.
+
+##  
+
+## •     Azure Event Grid: lightweight pub/sub for domain events (uploaded, processed, indexed).
+
+## •     Azure Cognitive Search: full‑text/filters/synonyms; supports geo filters and facets.
+
+## •     Azure Application Insights: telemetry, traces, performance dashboards, alerts.
+
+## •     Azure Maps: geocoding, route visualization, polygon queries for geofencing.
+
+## •     Azure SignalR Service: real‑time notifications for comments, likes, shares, and workflow updates.
+
+# Selected Azure services cont.
+
+##  
+
+## •     Azure Media Services: reliable transcoding/packaging for HLS/DASH VOD/Live.
+
+## •     Azure Kubernetes Service (AKS): optional for high‑throughput pipelines and AI inference.
+
+## •     Azure Storage Queue / Service Bus: buffering and durable messaging for backpressure.
+
+## •     Azure Data Explorer / Time Series Insights: telemetry and flight log analytics.
+
+# Advanced Features
+
+##  
+
+## •     AI content understanding: object detection, shot segmentation, auto‑tagging; leverage Video Indexer/Custom Vision.
+
+## •     Geospatial intelligence: POI matching, heatmaps of missions, compliance area notifications.
+
+## •     Content moderation: sensitive info detection (faces/license plates), automated redaction with human review loop.
+
+## •     Personalization: recommendations based on location, themes, interactions.
+
+## •     Low‑latency live: optimized packaging + WebSocket/SignalR interactions; adaptive bitrate streaming.
+
+# Assessment of limitations
+
+##  
+
+## •     Architectural complexity: microservices + events require governance, tracing, and robust DevOps.
+
+## •     Cost & bandwidth pressure: storage and egress can be significant; optimize with tiers and caching.
+
+## •     Latency: processing/indexing introduces delays; careful separation of real‑time vs. offline paths is vital.
+
+## •     Compliance & privacy: regional regulations vary; enforce fine‑grained access and retention policies.
+
+## •     Device heterogeneity: diverse codecs/bitrates/containers need transcoding and compatibility handling.
+
+# Evaluation of scalability
+
+##  
+
+## •     Strengths
+
+## •     Weaknesses
+
+## •     Mitigations
+
+## •     Serverless + event‑driven design adapts to peaks and troughs automatically.
+
+## •     Independent scaling for ingest, processing, search, and distribution avoids bottlenecks.
+
+## •     CDN/object storage support high read concurrency; indexes accelerate discovery.
+
+## •     Cross‑service topology increases failure domains and debugging difficulty.
+
+## •     Transcoding/AI inference can choke at extreme peaks without capacity planning.
+
+## •     Live streaming demands end‑to‑end tuning across network and regions.
+
+## •     Prioritize hot paths: dedicated pools and auto‑scale for upload, preview, live.
+
+## •     Workload tiering: separate real‑time and batch pipelines; implement backpressure.
+
+## •     Cost controls: storage lifecycle, proxy streams, thumbnails/low‑res previews by default.
+
+# Conclusion
+
+##  
+
+## •     A microservices, event‑driven, cloud‑native architecture delivers a scalable, secure, and collaborative drone media platform.
+
+## •     End‑to‑end coverage: ingest, process, catalog, search, distribute, and collaborate.
+
+## •     High performance discovery: Blob + Cosmos DB + Cognitive Search.
+
+## •     Safety & compliance: geofencing, privacy controls, audit trails.
+
+## •     Continuous optimization: monitor peaks, refine transcoding, manage costs and latencies.
+
+# Bibliography
+
+##  
+
+## •     Microsoft Entra ID: https://learn.microsoft.com/entra/identity/
+
+## •     Azure Front Door: https://learn.microsoft.com/azure/frontdoor/front-door-overview
+
+## •     Azure CDN: https://learn.microsoft.com/azure/cdn/cdn-overview
+
+## •     Azure Static Web Apps: https://learn.microsoft.com/azure/static-web-apps/
+
+## •     Azure Functions: https://learn.microsoft.com/azure/azure-functions/
+
+## •     Azure Blob Storage: https://learn.microsoft.com/azure/storage/blobs/storage-blobs-introduction
+
+## •     Azure Cosmos DB: https://learn.microsoft.com/azure/cosmos-db/
+
+## •     Azure Event Grid: https://learn.microsoft.com/azure/event-grid/overview
+
+## •     Azure Cognitive Search: https://learn.microsoft.com/azure/search/search-what-is-azure-search
+
+## •     Azure Application Insights: https://learn.microsoft.com/azure/azure-monitor/app/app-insights-overview
+
+## •     Azure Maps: https://learn.microsoft.com/azure/azure-maps/
+
+## •     Azure SignalR Service: https://learn.microsoft.com/azure/azure-signalr/signalr-overview
+
+## •     Azure Media Services: https://learn.microsoft.com/azure/media-services/
+
+## •     Azure Kubernetes Service: https://learn.microsoft.com/azure/aks/
+
+## •     Azure Data Explorer: https://learn.microsoft.com/azure/data-explorer/
+
+# Submission Checklist
+
+##  
+
+## •     Title slide includes: project name, 1-line description, student name, student number.
+
+## •     Problem Definition slide: focuses on technical/scalability issues in traditional solutions and how cloud solves them.
+
+## •     Solution Architecture slide(s): only use module-taught Azure resources; justify service choices relative to the chosen use case.
+
+## •     Wireframes: provide user journey/layout for the multimedia hosting page (as covered in Week 4/5).
+
+## •     Database design: ERD or NoSQL model (commented JSON/table) for users, assets, metadata, relations.
+
+## •     REST API design: UML for CRUD operations; align with module guidance (e.g., Logic Apps or covered API approach).
+
+## •     Advanced features: list up to two platform-level features (e.g., AI analysis, CDN, App Insights) with brief relevance.
+
+## •     Limitations assessment: identify constraints and risks (complexity, cost/bandwidth, latency, compliance, device heterogeneity).
+
+## •     Scalability assessment: articulate scale strategies (serverless/event-driven, independent scaling, CDN/object storage, queuing/backpressure).
+
+## •     Conclusion: improvements, commercial potential, ethical considerations.
+
+## •     References: complete and accessible links to Microsoft Learn/Docs; consistent citation.
+
+## •     Slide count: ≤15 for main slides; this checklist slide is excluded from the limit.
+
+## •     Format: deliver as PowerPoint (.pptx) per Blackboard submission requirements.

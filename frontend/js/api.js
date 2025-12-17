@@ -1,0 +1,104 @@
+// ============================================
+// Drone Media Sharing Platform - API Module
+// ============================================
+
+const API = {
+    /**
+     * 上传媒体文件
+     * @param {File} file - 文件对象
+     * @param {Object} metadata - 元数据
+     * @returns {Promise<Object>} - 上传结果
+     */
+    async uploadMedia(file, metadata) {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('metadata', JSON.stringify(metadata));
+
+        const response = await fetch(`${CONFIG.API_BASE_URL}/media/upload`, {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Upload failed');
+        }
+
+        return response.json();
+    },
+
+    /**
+     * 获取所有媒体
+     * @param {Object} params - 查询参数
+     * @returns {Promise<Array>} - 媒体列表
+     */
+    async getAllMedia(params = {}) {
+        const queryString = new URLSearchParams(params).toString();
+        const url = `${CONFIG.API_BASE_URL}/media${queryString ? '?' + queryString : ''}`;
+
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch media');
+        }
+
+        return response.json();
+    },
+
+    /**
+     * 获取单个媒体详情
+     * @param {string} id - 媒体ID
+     * @returns {Promise<Object>} - 媒体详情
+     */
+    async getMedia(id) {
+        const response = await fetch(`${CONFIG.API_BASE_URL}/media/${id}`);
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch media details');
+        }
+
+        return response.json();
+    },
+
+    /**
+     * 更新媒体信息
+     * @param {string} id - 媒体ID
+     * @param {Object} data - 更新数据
+     * @returns {Promise<Object>} - 更新结果
+     */
+    async updateMedia(id, data) {
+        const response = await fetch(`${CONFIG.API_BASE_URL}/media/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Update failed');
+        }
+
+        return response.json();
+    },
+
+    /**
+     * 删除媒体
+     * @param {string} id - 媒体ID
+     * @returns {Promise<void>}
+     */
+    async deleteMedia(id) {
+        const response = await fetch(`${CONFIG.API_BASE_URL}/media/${id}`, {
+            method: 'DELETE'
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Delete failed');
+        }
+
+        return response.json();
+    }
+};
+
