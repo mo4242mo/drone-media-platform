@@ -1,19 +1,26 @@
 # 🚁 Drone Media Sharing Platform
 
-COM682 Cloud Native Development - CW2 Implementation
+**[中文](#中文) | [English](#english)**
 
-## 📋 项目概述
+---
+
+<a name="中文"></a>
+## 中文
+
+### 📋 项目概述
 
 一个基于 Azure 云原生技术构建的无人机媒体分享平台，支持图片和视频的上传、浏览、编辑和删除。
 
-## 🌐 在线演示
+COM682 Cloud Native Development - CW2 实现
+
+### 🌐 在线演示
 
 | 组件 | URL |
 |------|-----|
 | **前端** | https://stdronemediastorage.z7.web.core.windows.net |
 | **API** | https://func-drone-media-api.azurewebsites.net/api |
 
-## 🏗️ 架构
+### 🏗️ 系统架构
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -42,7 +49,7 @@ COM682 Cloud Native Development - CW2 Implementation
 └────────────────────────────┘    └──────────────────────────────┘
 ```
 
-## ☁️ Azure 服务
+### ☁️ Azure 服务
 
 | 服务 | 用途 | 资源名称 |
 |------|------|----------|
@@ -52,7 +59,7 @@ COM682 Cloud Native Development - CW2 Implementation
 | **Application Insights** | 监控和日志 | func-drone-media-api |
 | **Monitor Alerts** | 告警规则 | 3个告警规则 |
 
-## 📡 API 端点
+### 📡 API 端点
 
 | 操作 | 方法 | 端点 |
 |------|------|------|
@@ -62,33 +69,31 @@ COM682 Cloud Native Development - CW2 Implementation
 | 更新媒体 | PUT | `/api/media/{id}` |
 | 删除媒体 | DELETE | `/api/media/{id}` |
 
-## 🔧 技术栈
+### 🔧 技术栈
 
-### 前端
+**前端**
 - HTML5 / CSS3 / JavaScript
 - 响应式设计
-- 深色主题 UI
+- 深色赛博朋克主题 UI
 
-### 后端
+**后端**
 - Node.js 20
 - Azure Functions v4 编程模型
 - @azure/cosmos SDK
 - @azure/storage-blob SDK
 
-### 数据库
+**数据库**
 - Azure Cosmos DB (NoSQL)
 - 分区键: `/id`
 
-## 🚀 CI/CD
+### 🚀 CI/CD
 
 使用 GitHub Actions 实现自动部署：
 
 - **前端部署**: 推送到 `main` 分支时自动部署到 Blob Storage
 - **API部署**: 推送到 `main` 分支时自动部署到 Function App
 
-详见 [CI/CD 设置指南](./CICD-SETUP.md)
-
-## 📊 监控告警
+### 📊 监控告警
 
 | 告警 | 条件 | 严重性 |
 |------|------|--------|
@@ -96,13 +101,114 @@ COM682 Cloud Native Development - CW2 Implementation
 | 响应时间 | > 3 秒 | 信息 |
 | Cosmos DB RU | > 1000/5分钟 | 信息 |
 
-## 📁 项目结构
+---
+
+<a name="english"></a>
+## English
+
+### 📋 Project Overview
+
+A drone media sharing platform built with Azure cloud-native technologies, supporting upload, browse, edit, and delete operations for images and videos.
+
+COM682 Cloud Native Development - CW2 Implementation
+
+### 🌐 Live Demo
+
+| Component | URL |
+|-----------|-----|
+| **Frontend** | https://stdronemediastorage.z7.web.core.windows.net |
+| **API** | https://func-drone-media-api.azurewebsites.net/api |
+
+### 🏗️ Architecture
 
 ```
-cnd_cw2/
+┌─────────────────────────────────────────────────────────────────┐
+│                         User Browser                             │
+└──────────────────────────────┬──────────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────────┐
+│              Azure Blob Storage (Static Website)                 │
+│                    Frontend HTML/CSS/JS                          │
+└──────────────────────────────┬──────────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    Azure Functions (REST API)                    │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌────────┐│
+│  │GetAllMedia│ │GetMedia │ │UploadMedia│ │UpdateMedia│ │Delete ││
+│  └──────────┘ └──────────┘ └──────────┘ └──────────┘ └────────┘│
+└────────────────┬───────────────────────────────────┬────────────┘
+                 │                               │
+                 ▼                               ▼
+┌────────────────────────────┐    ┌──────────────────────────────┐
+│     Azure Cosmos DB        │    │    Azure Blob Storage        │
+│     (Metadata Storage)     │    │    (Media File Storage)      │
+│   DroneMediaDB/MediaAssets │    │       media container        │
+└────────────────────────────┘    └──────────────────────────────┘
+```
+
+### ☁️ Azure Services
+
+| Service | Purpose | Resource Name |
+|---------|---------|---------------|
+| **Blob Storage** | Static Website + Media Storage | stdronemediastorage |
+| **Cosmos DB** | NoSQL Metadata Storage | cosmos-drone-media |
+| **Functions** | Serverless REST API | func-drone-media-api |
+| **Application Insights** | Monitoring & Logging | func-drone-media-api |
+| **Monitor Alerts** | Alert Rules | 3 alert rules |
+
+### 📡 API Endpoints
+
+| Operation | Method | Endpoint |
+|-----------|--------|----------|
+| Get All Media | GET | `/api/media` |
+| Get Single Media | GET | `/api/media/{id}` |
+| Upload Media | POST | `/api/media/upload` |
+| Update Media | PUT | `/api/media/{id}` |
+| Delete Media | DELETE | `/api/media/{id}` |
+
+### 🔧 Tech Stack
+
+**Frontend**
+- HTML5 / CSS3 / JavaScript
+- Responsive Design
+- Dark Cyberpunk Theme UI
+
+**Backend**
+- Node.js 20
+- Azure Functions v4 Programming Model
+- @azure/cosmos SDK
+- @azure/storage-blob SDK
+
+**Database**
+- Azure Cosmos DB (NoSQL)
+- Partition Key: `/id`
+
+### 🚀 CI/CD
+
+Automated deployment using GitHub Actions:
+
+- **Frontend Deployment**: Auto-deploy to Blob Storage on push to `main` branch
+- **API Deployment**: Auto-deploy to Function App on push to `main` branch
+
+### 📊 Monitoring Alerts
+
+| Alert | Condition | Severity |
+|-------|-----------|----------|
+| HTTP 5xx Errors | > 5 in 5min | Warning |
+| Response Time | > 3 seconds | Info |
+| Cosmos DB RU | > 1000 in 5min | Info |
+
+---
+
+## 📁 Project Structure
+
+```
+drone-media-platform/
 ├── .github/
 │   └── workflows/
-│       ├── deploy-frontend.yml    # 前端CI/CD
+│       ├── deploy-frontend.yml    # Frontend CI/CD
 │       └── deploy-api.yml         # API CI/CD
 ├── api/
 │   ├── src/
@@ -123,16 +229,17 @@ cnd_cw2/
 │   │   └── config.js
 │   └── index.html
 ├── docs/
-│   ├── cw1.txt                    # CW1 设计文档
-│   └── azure信息.txt               # Azure资源信息
-├── CICD-SETUP.md                  # CI/CD配置指南
+│   └── cw1.txt                    # CW1 Design Document
+├── CICD-SETUP.md                  # CI/CD Setup Guide
 └── README.md
 ```
 
-## 👨‍💻 开发者
+---
+
+## 👨‍💻 Developer
 
 COM682 Cloud Native Development - Coursework 2
 
-## 📄 许可证
+## 📄 License
 
-本项目仅用于学术目的。
+This project is for academic purposes only.
