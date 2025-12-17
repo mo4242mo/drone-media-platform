@@ -24,30 +24,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Azure Login
-        uses: azure/login@v1
+      - name: Upload frontend to Azure Blob Storage
+        uses: azure/CLI@v2
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Clear existing files
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-            az storage blob delete-batch \
-              --account-name ${{ env.AZURE_STORAGE_ACCOUNT }} \
-              --source ${{ env.AZURE_CONTAINER }} \
-              --auth-mode key
-
-      - name: Upload frontend files
-        uses: azure/CLI@v1
-        with:
+          azcliversion: latest
           inlineScript: |
             az storage blob upload-batch \
               --account-name ${{ env.AZURE_STORAGE_ACCOUNT }} \
               --destination ${{ env.AZURE_CONTAINER }} \
               --source ./frontend \
               --overwrite \
-              --auth-mode key
+              --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}"
 
       - name: Deployment Summary
         run: |
