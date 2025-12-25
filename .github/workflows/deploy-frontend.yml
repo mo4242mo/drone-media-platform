@@ -31,10 +31,10 @@ jobs:
           inlineScript: |
             az storage blob upload-batch \
               --account-name ${{ env.AZURE_STORAGE_ACCOUNT }} \
+              --account-key "${{ secrets.AZURE_STORAGE_KEY }}" \
               --destination ${{ env.AZURE_CONTAINER }} \
               --source ./frontend \
-              --overwrite \
-              --connection-string "${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}"
+              --overwrite
 
       - name: Deployment Summary
         run: |
