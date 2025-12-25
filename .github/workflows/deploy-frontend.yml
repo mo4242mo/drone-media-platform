@@ -32,9 +32,11 @@ jobs:
             az storage blob upload-batch \
               --account-name ${{ env.AZURE_STORAGE_ACCOUNT }} \
               --account-key "${{ secrets.AZURE_STORAGE_KEY }}" \
-              --destination ${{ env.AZURE_CONTAINER }} \
+              --destination '${{ env.AZURE_CONTAINER }}' \
               --source ./frontend \
-              --overwrite
+              --overwrite \
+              --auth-mode key \
+              --only-show-errors
 
       - name: Deployment Summary
         run: |
