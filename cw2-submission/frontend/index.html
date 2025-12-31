@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drone Media Sharing Platform - Cloud Native</title>
+    <!-- CI/CD Test - Auto Deploy v1.0.6 - Secrets rotated -->
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 背景动画 -->
+    <div class="bg-grid"></div>
+    <div class="bg-glow"></div>
+
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="drone-icon">🚁</span>
+            <span class="brand-text">DRONE<span class="accent">MEDIA</span></span>
+        </div>
+        <div class="nav-stats">
+            <div class="stat-item">
+                <span class="stat-value" id="totalAssets">0</span>
+                <span class="stat-label">ASSETS</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value" id="totalImages">0</span>
+                <span class="stat-label">IMAGES</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value" id="totalVideos">0</span>
+                <span class="stat-label">VIDEOS</span>
+            </div>
+        </div>
+        <button class="btn-upload" onclick="openUploadModal()">
+            <span class="btn-icon">+</span>
+            <span>UPLOAD</span>
+        </button>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+        <!-- 搜索和筛选 -->
+        <div class="filter-bar">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search media..." onkeyup="filterMedia()">
+                <span class="search-icon">🔍</span>
+            </div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">ALL</button>
+                <button class="filter-btn" data-filter="image" onclick="setFilter('image')">IMAGES</button>
+                <button class="filter-btn" data-filter="video" onclick="setFilter('video')">VIDEOS</button>
+            </div>
+        </div>
+
+        <!-- 媒体网格 -->
+        <div class="media-grid" id="mediaGrid">
+            <!-- 媒体卡片将通过JS动态生成 -->
+        </div>
+
+        <!-- 加载状态 -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loader">
+                <div class="drone-loader">🚁</div>
+                <p>Loading media...</p>
+            </div>
+        </div>
+
+        <!-- 空状态 -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <div class="empty-icon">📷</div>
+            <h3>No Media Found</h3>
+            <p>Upload your first drone media to get started</p>
+            <button class="btn-upload" onclick="openUploadModal()">
+                <span class="btn-icon">+</span>
+                <span>UPLOAD NOW</span>
+            </button>
+        </div>
+    </main>
+
+    <!-- 上传模态框 -->
+    <div class="modal" id="uploadModal">
+        <div class="modal-content upload-modal">
+            <div class="modal-header">
+                <h2>📤 Upload Media</h2>
+                <button class="close-btn" onclick="closeUploadModal()">&times;</button>
+            </div>
+            <form id="uploadForm" onsubmit="handleUpload(event)">
+                <!-- 文件上传区 -->
+                <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+                    <input type="file" id="fileInput" accept="image/*,video/*" onchange="handleFileSelect(event)" hidden>
+                    <div class="upload-placeholder" id="uploadPlaceholder">
+                        <span class="upload-icon">📁</span>
+                        <p>Click or drag file here</p>
+                        <small>Supports: JPG, PNG, MP4, MOV</small>
+                    </div>
+                    <div class="upload-preview" id="uploadPreview" style="display: none;">
+                        <img id="previewImage" src="" alt="Preview">
+                        <video id="previewVideo" src="" controls style="display: none;"></video>
+                    </div>
+                </div>
+
+                <!-- 元数据表单 -->
+                <div class="form-group">
+                    <label>Title *</label>
+                    <input type="text" id="mediaTitle" required placeholder="Enter media title">
+                </div>
+
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="mediaDescription" placeholder="Describe your media..."></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Drone Model</label>
+                        <input type="text" id="droneModel" placeholder="e.g., DJI Mavic 3">
+                    </div>
+                    <div class="form-group">
+                        <label>Altitude (m)</label>
+                        <input type="number" id="altitude" placeholder="120">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Latitude</label>
+                        <input type="number" step="any" id="latitude" placeholder="31.2304">
+                    </div>
+                    <div class="form-group">
+                        <label>Longitude</label>
+                        <input type="number" step="any" id="longitude" placeholder="121.4737">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Tags (comma separated)</label>
+                    <input type="text" id="mediaTags" placeholder="aerial, landscape, sunset">
+                </div>
+
+                <button type="submit" class="btn-submit" id="submitBtn">
+                    <span>UPLOAD MEDIA</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 详情/编辑模态框 -->
+    <div class="modal" id="detailModal">
+        <div class="modal-content detail-modal">
+            <div class="modal-header">
+                <h2 id="detailTitle">Media Details</h2>
+                <button class="close-btn" onclick="closeDetailModal()">&times;</button>
+            </div>
+            <div class="detail-content">
+                <div class="detail-media">
+                    <img id="detailImage" src="" alt="Media">
+                    <video id="detailVideo" src="" controls style="display: none;"></video>
+                </div>
+                <div class="detail-info">
+                    <form id="editForm" onsubmit="handleUpdate(event)">
+                        <input type="hidden" id="editId">
+                        
+                        <div class="form-group">
+                            <label>Title</label>
+                            <input type="text" id="editTitle" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea id="editDescription"></textarea>
+                        </div>
+
+                        <div class="metadata-grid">
+                            <div class="metadata-item">
+                                <span class="meta-icon">🚁</span>
+                                <span class="meta-label">Drone</span>
+                                <input type="text" id="editDroneModel" class="meta-input">
+                            </div>
+                            <div class="metadata-item">
+                                <span class="meta-icon">📍</span>
+                                <span class="meta-label">Altitude</span>
+                                <input type="number" id="editAltitude" class="meta-input">
+                            </div>
+                            <div class="metadata-item">
+                                <span class="meta-icon">🌐</span>
+                                <span class="meta-label">Latitude</span>
+                                <input type="number" step="any" id="editLatitude" class="meta-input">
+                            </div>
+                            <div class="metadata-item">
+                                <span class="meta-icon">🌐</span>
+                                <span class="meta-label">Longitude</span>
+                                <input type="number" step="any" id="editLongitude" class="meta-input">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Tags</label>
+                            <input type="text" id="editTags">
+                        </div>
+
+                        <div class="detail-meta">
+                            <p><strong>File:</strong> <span id="detailFileName"></span></p>
+                            <p><strong>Type:</strong> <span id="detailFileType"></span></p>
+                            <p><strong>Size:</strong> <span id="detailFileSize"></span></p>
+                            <p><strong>Uploaded:</strong> <span id="detailUploadedAt"></span></p>
+                        </div>
+
+                        <div class="detail-actions">
+                            <button type="submit" class="btn-save">💾 Save Changes</button>
+                            <button type="button" class="btn-delete" onclick="handleDelete()">🗑️ Delete</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast 通知 -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
+

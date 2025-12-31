@@ -2,13 +2,13 @@ const { app } = require('@azure/functions');
 const { CosmosClient } = require('@azure/cosmos');
 const { BlobServiceClient } = require('@azure/storage-blob');
 
-app.http('deleteMedia', {
+app.http('DeleteMedia', {
     methods: ['DELETE'],
     authLevel: 'anonymous',
-    route: 'media',
+    route: 'media/{id}',
     handler: async (request, context) => {
         const headers = { 'Content-Type': 'application/json' };
-        const id = request.query.get('id');
+        const id = request.params.id;
         
         try {
             const cosmosClient = new CosmosClient({

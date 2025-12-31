@@ -1,20 +1,16 @@
 const { app } = require('@azure/functions');
 const { CosmosClient } = require('@azure/cosmos');
 
-app.http('updateMedia', {
+app.http('UpdateMedia', {
     methods: ['PUT'],
     authLevel: 'anonymous',
-    route: 'media',
+    route: 'media/{id}',
     handler: async (request, context) => {
         const headers = { 'Content-Type': 'application/json' };
+        const id = request.params.id;
         
         try {
             const body = await request.json();
-            const id = body.id;
-            
-            if (!id) {
-                return { status: 400, headers, body: JSON.stringify({ error: 'Media ID is required' }) };
-            }
             
             const client = new CosmosClient({
                 endpoint: process.env.COSMOS_ENDPOINT,

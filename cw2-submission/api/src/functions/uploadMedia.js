@@ -3,10 +3,10 @@ const { CosmosClient } = require('@azure/cosmos');
 const { BlobServiceClient } = require('@azure/storage-blob');
 const { v4: uuidv4 } = require('uuid');
 
-app.http('uploadMedia', {
+app.http('UploadMedia', {
     methods: ['POST'],
     authLevel: 'anonymous',
-    route: 'media',
+    route: 'media/upload',
     handler: async (request, context) => {
         const headers = { 'Content-Type': 'application/json' };
         

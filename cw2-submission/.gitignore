@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Azure Functions
+api/local.settings.json
+*.funcignore
+
+# Build outputs
+dist/
+build/
+*.zip
+
+# Logs
+logs/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Secrets
+*.pem
+*.key
+secrets/
+publish-profile.xml
+sas-url.txt
+appsettings.json
+docs/azure信息.txt
+
+# Temporary files
+*.tmp
+*.temp
+extracted_content/
+
+# Python
+__pycache__/
+*.pyc
+.env
+

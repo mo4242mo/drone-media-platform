@@ -1,0 +1,19 @@
+{
+  "name": "drone-media-api",
+  "version": "1.0.2",
+  "description": "Azure Functions API for Drone Media Sharing Platform",
+  "main": "src/index.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "func start",
+    "test": "echo \"No tests yet\""
+  },
+  "dependencies": {
+    "@azure/cosmos": "^4.0.0",
+    "@azure/functions": "^4.0.0",
+    "@azure/storage-blob": "^12.17.0",
+    "uuid": "^9.0.0"
+  }
+}

@@ -2,7 +2,7 @@ const { app } = require('@azure/functions');
 const { CosmosClient } = require('@azure/cosmos');
 
 // Get all media
-app.http('getMedia', {
+app.http('GetAllMedia', {
     methods: ['GET'],
     authLevel: 'anonymous',
     route: 'media',
@@ -30,8 +30,8 @@ app.http('getMedia', {
     }
 });
 
-// Get single media by ID (not used by frontend currently)
-app.http('getMediaById', {
+// Get single media
+app.http('GetMedia', {
     methods: ['GET'],
     authLevel: 'anonymous',
     route: 'media/{id}',
