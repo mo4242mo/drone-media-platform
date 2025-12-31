@@ -36,15 +36,21 @@ jobs:
           cd ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
           npm install
 
-      - name: Build zip package (exclude secrets & node_modules)
+      - name: Build production package
+        run: |
+          cd ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+          npm prune --production
+
+      - name: Build zip package (include node_modules)
         run: |
           sudo apt-get update
           sudo apt-get install -y zip
           cd ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
           zip -r functionapp.zip . \
-            -x "**/node_modules/**" \
             -x "local.settings.json" \
-            -x "**/.git/**"
+            -x "**/.git/**" \
+            -x "**/.vscode/**" \
+            -x "**/test/**"
 
       - name: ZipDeploy to Azure Functions (Kudu)
         env:
