@@ -1,8 +1,9 @@
 {
   "name": "drone-media-api",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Azure Functions API for Drone Media Sharing Platform",
   "main": "src/index.js",
+  "type": "commonjs",
   "engines": {
     "node": ">=18.0.0"
   },
