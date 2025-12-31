@@ -60,4 +60,5 @@ function formatDate(dateString) {
     });
 }
 
-// CI/CD test - 12/26/2025 00:03:22
+// Version check - Force browser cache refresh
+console.log('Config loaded - Version 2.0.0 - ' + new Date().toISOString());
