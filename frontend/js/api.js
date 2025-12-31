@@ -10,11 +10,6 @@ const API = {
      * @returns {Promise<Object>} - 上传结果
      */
     async uploadMedia(file, metadata) {
-        // #region agent log
-        const apiUrl = CONFIG?.API_BASE_URL || 'unknown';
-        fetch('http://127.0.0.1:7242/ingest/a558d500-056b-4d45-a4d0-c69715fa1605',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api.js:13',message:'Frontend upload start',data:{fileName:file.name,fileType:file.type,fileSize:file.size,url:apiUrl+'/media/upload'},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1'})}).catch(()=>{});
-        // #endregion
-        
         const formData = new FormData();
         formData.append('file', file);
         formData.append('title', metadata.title || 'Untitled');
@@ -33,15 +28,9 @@ const API = {
             } catch {
                 error = null;
             }
-            // #region agent log
-            fetch('http://127.0.0.1:7242/ingest/a558d500-056b-4d45-a4d0-c69715fa1605',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api.js:30',message:'Frontend upload failed',data:{status:response.status,statusText:response.statusText,error},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1'})}).catch(()=>{});
-            // #endregion
             throw new Error(error?.message || error?.error || 'Upload failed');
         }
 
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/a558d500-056b-4d45-a4d0-c69715fa1605',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api.js:36',message:'Frontend upload success',data:{status:response.status},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1'})}).catch(()=>{});
-        // #endregion
         return response.json();
     },
 

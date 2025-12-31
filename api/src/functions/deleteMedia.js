@@ -10,9 +10,6 @@ app.http('deleteMedia', {
         const headers = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'DELETE, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type' };
         const id = request.params.id;
         
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/a558d500-056b-4d45-a4d0-c69715fa1605',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'deleteMedia.js:12',message:'Delete request received',data:{id},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H3'})}).catch(()=>{});
-        
         try {
             const cosmosClient = new CosmosClient({
                 endpoint: process.env.COSMOS_ENDPOINT,
@@ -39,15 +36,9 @@ app.http('deleteMedia', {
             // Delete from Cosmos DB
             await container.item(id, id).delete();
             
-            // #region agent log
-            fetch('http://127.0.0.1:7242/ingest/a558d500-056b-4d45-a4d0-c69715fa1605',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'deleteMedia.js:44',message:'Delete success',data:{id},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H3'})}).catch(()=>{});
-            // #endregion
             return { status: 200, headers, body: JSON.stringify({ message: 'Deleted successfully' }) };
         } catch (error) {
             context.log('Delete error:', error);
-            // #region agent log
-            fetch('http://127.0.0.1:7242/ingest/a558d500-056b-4d45-a4d0-c69715fa1605',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'deleteMedia.js:51',message:'Delete error',data:{error:error.message},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H3'})}).catch(()=>{});
-            // #endregion
             return { status: 500, headers, body: JSON.stringify({ error: error.message }) };
         }
     }
