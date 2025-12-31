@@ -7,7 +7,11 @@ app.http('getMedia', {
     authLevel: 'anonymous',
     route: 'media',
     handler: async (request, context) => {
-        const headers = { 'Content-Type': 'application/json' };
+        const headers = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type' };
+        
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/a558d500-056b-4d45-a4d0-c69715fa1605',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'getMedia.js:11',message:'GetMedia request received',data:{},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H5'})}).catch(()=>{});
+        // #endregion
         
         try {
             const client = new CosmosClient({
@@ -22,9 +26,15 @@ app.http('getMedia', {
                 .query('SELECT * FROM c ORDER BY c.uploadedAt DESC')
                 .fetchAll();
             
+            // #region agent log
+            fetch('http://127.0.0.1:7242/ingest/a558d500-056b-4d45-a4d0-c69715fa1605',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'getMedia.js:28',message:'GetMedia success',data:{count:resources.length},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H5'})}).catch(()=>{});
+            // #endregion
             return { status: 200, headers, body: JSON.stringify(resources) };
         } catch (error) {
             context.log('Error fetching media:', error);
+            // #region agent log
+            fetch('http://127.0.0.1:7242/ingest/a558d500-056b-4d45-a4d0-c69715fa1605',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'getMedia.js:35',message:'GetMedia error',data:{error:error.message},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H5'})}).catch(()=>{});
+            // #endregion
             return { status: 500, headers, body: JSON.stringify({ error: error.message }) };
         }
     }

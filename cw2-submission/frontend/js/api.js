@@ -20,8 +20,13 @@ const API = {
         });
 
         if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.message || 'Upload failed');
+            let error;
+            try {
+                error = await response.json();
+            } catch {
+                error = null;
+            }
+            throw new Error(error?.message || error?.error || 'Upload failed');
         }
 
         return response.json();
@@ -76,8 +81,13 @@ const API = {
         });
 
         if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.message || 'Update failed');
+            let error;
+            try {
+                error = await response.json();
+            } catch {
+                error = null;
+            }
+            throw new Error(error?.message || error?.error || 'Update failed');
         }
 
         return response.json();
@@ -94,8 +104,13 @@ const API = {
         });
 
         if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.message || 'Delete failed');
+            let error;
+            try {
+                error = await response.json();
+            } catch {
+                error = null;
+            }
+            throw new Error(error?.message || error?.error || 'Delete failed');
         }
 
         return response.json();
