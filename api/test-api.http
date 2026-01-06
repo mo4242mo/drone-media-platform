@@ -1,0 +1,61 @@
+### Azure Functions API 测试文件
+### 需要安装 VS Code 的 REST Client 扩展
+
+@baseUrl = http://localhost:7071
+@apiPath = /api/media
+
+### ============================================
+### 1. 获取所有媒体资源
+### ============================================
+GET {{baseUrl}}{{apiPath}}
+
+### ============================================
+### 2. 获取单个媒体（根据 ID）
+### ============================================
+GET {{baseUrl}}{{apiPath}}/your-media-id-here
+
+### ============================================
+### 3. 上传媒体（需要实际的文件）
+### ============================================
+# POST {{baseUrl}}{{apiPath}}
+# Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+
+# ------WebKitFormBoundary
+# Content-Disposition: form-data; name="file"; filename="test.jpg"
+# Content-Type: image/jpeg
+
+# < ./test-image.jpg
+# ------WebKitFormBoundary
+# Content-Disposition: form-data; name="title"
+
+# 测试图片
+# ------WebKitFormBoundary
+# Content-Disposition: form-data; name="description"
+
+# 这是一张测试图片
+# ------WebKitFormBoundary--
+
+### ============================================
+### 4. 更新媒体信息
+### ============================================
+PUT {{baseUrl}}{{apiPath}}/your-media-id-here
+Content-Type: application/json
+
+{
+  "title": "更新后的标题",
+  "description": "更新后的描述信息"
+}
+
+### ============================================
+### 5. 删除媒体
+### ============================================
+DELETE {{baseUrl}}{{apiPath}}/your-media-id-here
+
+### ============================================
+### 测试 CORS 预检请求
+### ============================================
+OPTIONS {{baseUrl}}{{apiPath}}
+Origin: http://localhost:5500
+Access-Control-Request-Method: POST
+Access-Control-Request-Headers: Content-Type
+

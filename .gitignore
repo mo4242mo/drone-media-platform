@@ -39,6 +39,11 @@ docs/azure信息.txt
 *.temp
 extracted_content/
 
+# Local development files
+*.local.html
+*.local.js
+*LOCAL-DEV-GUIDE.md
+
 # Python
 __pycache__/
 *.pyc

@@ -769,3 +769,30 @@ form {
     }
 }
 
+/* ============================================
+   Local Development Badge
+   ============================================ */
+.dev-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    margin-left: 1rem;
+    background: linear-gradient(135deg, #ff6b35, #ff00aa);
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    animation: pulse 2s ease-in-out infinite;
+    box-shadow: 0 0 10px rgba(255, 107, 53, 0.5);
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(1.05);
+    }
+}
+
